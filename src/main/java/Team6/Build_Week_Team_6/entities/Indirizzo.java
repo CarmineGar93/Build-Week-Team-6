@@ -7,12 +7,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
 import java.util.UUID;
 
 @Data
 @NoArgsConstructor
 @Entity
 @Table(name = "indirizzi")
+@JsonIgnoreProperties({"clienti"})
 public class Indirizzo {
     @Id
     @GeneratedValue
@@ -26,6 +28,8 @@ public class Indirizzo {
     @ManyToOne
     @JoinColumn(name = "comune_id", nullable = false)
     private Comune comune;
+    @ManyToMany(mappedBy = "indirizzi")
+    private List<Cliente> clienti;
 
     public Indirizzo(String via, int civico, String localita, int cap, Comune comune) {
         this.via = via;

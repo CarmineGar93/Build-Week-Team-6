@@ -28,12 +28,15 @@ public class Fattura {
     @ManyToOne
     @JoinColumn(name = "stato_fattura_id")
     private StatoFattura statoFattura;
+    @ManyToOne
+    @JoinColumn(name = "cliente_id")
+    private Cliente cliente;
 
-    public Fattura(long numero, LocalDate data, double importo, StatoFattura statoFattura) {//TODO aggiungere cliente
-        // nel costruttore
+    public Fattura(long numero, LocalDate data, double importo, StatoFattura statoFattura, Cliente cliente) {
         this.numero = numero;
         this.data = data;
         this.importo = importo;
         this.statoFattura = statoFattura;
+        this.cliente = cliente;
     }
 }
