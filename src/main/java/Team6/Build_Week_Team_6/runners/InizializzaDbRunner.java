@@ -4,11 +4,14 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
 @Component
 @Order(1)
 public class InizializzaDbRunner implements CommandLineRunner {
     @Override
-    public void run(String... args) throws Exception {
+    public void run(String... args) throws FileNotFoundException, IOException {
        /* BufferedReader reader = new BufferedReader(new FileReader("province-italiane.csv"));
         reader.readLine();
         String line = reader.readLine();

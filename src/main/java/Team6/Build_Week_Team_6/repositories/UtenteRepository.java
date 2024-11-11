@@ -1,4 +1,4 @@
-package Team6.Build_Week_Team_6.Repository;
+package Team6.Build_Week_Team_6.repositories;
 
 import Team6.Build_Week_Team_6.entities.Utente;
 import org.springframework.data.jpa.repository.JpaRepository;
