@@ -18,7 +18,8 @@ import java.util.UUID;
 @NoArgsConstructor
 @Entity
 @Table(name = "utenti")
-@JsonIgnoreProperties({"accountNonLocked", "accountNonExpired", "credentialsNonExpired", "enabled", "authorities", "password", "username"})
+@JsonIgnoreProperties({"accountNonLocked", "accountNonExpired", "credentialsNonExpired", "enabled", "authorities",
+        "password", "username"})
 public class Utente implements UserDetails {
     @Id
     @GeneratedValue
@@ -30,7 +31,9 @@ public class Utente implements UserDetails {
     @Column(name = "avatar_url", nullable = false)
     private String avatarUrl;
     @ManyToMany
-    @JoinTable(name = "utenti_ruoli", joinColumns = @JoinColumn(name = "utente_id"), inverseJoinColumns = @JoinColumn(name = "ruolo_id"))
+    @JoinTable(name = "utenti_ruoli", joinColumns = @JoinColumn(name = "utente_id"), inverseJoinColumns =
+    @JoinColumn(name = "ruolo_id"))
+    @Setter(AccessLevel.NONE)
     private List<RuoloUtente> ruoli;
 
     public Utente(String username, String email, String password, String nome, String cognome) {
@@ -40,7 +43,11 @@ public class Utente implements UserDetails {
         this.nome = nome;
         this.cognome = cognome;
         this.avatarUrl = "https://ui-avatars.com/api/?name=" +
-               nome + "+" + cognome;
+                nome + "+" + cognome;
+    }
+
+    public void addRuolo(RuoloUtente ruoloUtente) {
+        this.ruoli.add(ruoloUtente);
     }
 
     @Override
