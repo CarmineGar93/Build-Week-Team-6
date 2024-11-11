@@ -1,19 +1,15 @@
 package Team6.Build_Week_Team_6.runners;
 
-import Team6.Build_Week_Team_6.entities.Provincia;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
-
-import java.io.BufferedReader;
-import java.io.FileReader;
 
 @Component
 @Order(1)
 public class InizializzaDbRunner implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
-        BufferedReader reader = new BufferedReader(new FileReader("province-italiane.csv"));
+       /* BufferedReader reader = new BufferedReader(new FileReader("province-italiane.csv"));
         reader.readLine();
         String line = reader.readLine();
         while (line != null) {
@@ -34,6 +30,6 @@ public class InizializzaDbRunner implements CommandLineRunner {
             Provincia provincia = new Provincia(splitted[1], splitted[0]);
             System.out.println(provincia);
             line = reader.readLine();
-        }
+        }*/
     }
 }
