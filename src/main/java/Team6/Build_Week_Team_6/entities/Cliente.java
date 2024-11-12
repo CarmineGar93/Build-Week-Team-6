@@ -25,13 +25,13 @@ public class Cliente {
     private UUID clienteId;
     @Column(name = "ragione_sociale", nullable = false)
     private String ragioneSociale;
-    @Column(name = "partiva_iva", nullable = false, length = 11)
-    private String partivaIva;
+    @Column(name = "partita_iva", nullable = false, length = 13, unique = true)
+    private String partitaIva;
     @Column(nullable = false)
     private String email, pec, telefono;
     @Column(name = "data_inserimento", nullable = false)
     private LocalDate dataInserimento;
-    @Column(name = "data_ultimo_contatto", nullable = false)
+    @Column(name = "data_ultimo_contatto")
     private LocalDate dataUltimoContatto;
     @Column(name = "fatturato_annuale", nullable = false)
     private double fatturatoAnnuale;
@@ -57,16 +57,16 @@ public class Cliente {
     @OneToMany(mappedBy = "cliente")
     private List<Fattura> fatture;
 
-    public Cliente(String ragioneSociale, String partivaIva, String email, String pec, String telefono,
-                   LocalDate dataUltimoContatto, String emailContatto, String nomeContatto, String cognomeContatto,
+    public Cliente(String ragioneSociale, String partitaIva, String email, String pec, String telefono,
+                   String emailContatto, String nomeContatto, String cognomeContatto,
                    String telefonoContatto, TipoCliente tipoCliente, Indirizzo indirizzoSedeLegale,
                    Indirizzo indirizzoSedeOperativa) {
+        this.fatturatoAnnuale = 0;
         this.ragioneSociale = ragioneSociale;
-        this.partivaIva = partivaIva;
+        this.partitaIva = partitaIva;
         this.email = email;
         this.pec = pec;
         this.telefono = telefono;
-        this.dataUltimoContatto = dataUltimoContatto;
         this.emailContatto = emailContatto;
         this.nomeContatto = nomeContatto;
         this.cognomeContatto = cognomeContatto;
