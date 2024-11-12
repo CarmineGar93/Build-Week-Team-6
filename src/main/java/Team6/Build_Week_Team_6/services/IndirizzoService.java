@@ -1,7 +1,6 @@
 package Team6.Build_Week_Team_6.services;
 
 import Team6.Build_Week_Team_6.dto.IndirizzoDTO;
-import Team6.Build_Week_Team_6.dto.IndirizzoResponseDTO;
 import Team6.Build_Week_Team_6.entities.Comune;
 import Team6.Build_Week_Team_6.entities.Indirizzo;
 import Team6.Build_Week_Team_6.exceptions.BadRequestException;
@@ -21,13 +20,19 @@ public class IndirizzoService {
     @Autowired
     private ComuneRepository comuneRepository;
 
-    public IndirizzoResponseDTO save(IndirizzoDTO body) {
+    public Indirizzo save(IndirizzoDTO body) {
+        // Verifica se l'indirizzo esiste già
         if (existsByViaAndCivicoAndCap(body.via(), body.civico(), body.cap())) {
-            throw new BadRequestException("Indirizzo già esistenze ");
+            throw new BadRequestException("Indirizzo già esistente con via: " + body.via() +
+                    ", civico: " + body.civico() +
+                    ", cap: " + body.cap());
         }
+
+        // Verifica esistenza comune
         Comune comune = comuneRepository.findById(body.comuneId())
                 .orElseThrow(() -> new NotFoundException("Comune con id " + body.comuneId() + " non trovato"));
 
+        // Crea nuovo indirizzo
         Indirizzo newIndirizzo = new Indirizzo();
         newIndirizzo.setVia(body.via());
         newIndirizzo.setCivico(body.civico());
@@ -35,32 +40,13 @@ public class IndirizzoService {
         newIndirizzo.setCap(body.cap());
         newIndirizzo.setComune(comune);
 
-        Indirizzo savedIndirizzo = indirizzoRepository.save(newIndirizzo);
-
-        return new IndirizzoResponseDTO(
-                savedIndirizzo.getIndirizzoId(),
-                savedIndirizzo.getVia(),
-                savedIndirizzo.getCivico(),
-                savedIndirizzo.getLocalita(),
-                savedIndirizzo.getCap(),
-                savedIndirizzo.getComune().getNome(),
-                savedIndirizzo.getComune().getProvincia().getNome()
-        );
+        // Salva e ritorna l'indirizzo
+        return indirizzoRepository.save(newIndirizzo);
     }
 
-    public IndirizzoResponseDTO findById(UUID id) {
-        Indirizzo indirizzo = indirizzoRepository.findById(id)
+    public Indirizzo findById(UUID id) {
+        return indirizzoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Indirizzo con id " + id + " non trovato"));
-
-        return new IndirizzoResponseDTO(
-                indirizzo.getIndirizzoId(),
-                indirizzo.getVia(),
-                indirizzo.getCivico(),
-                indirizzo.getLocalita(),
-                indirizzo.getCap(),
-                indirizzo.getComune().getNome(),
-                indirizzo.getComune().getProvincia().getNome()
-        );
     }
 
     private boolean existsByViaAndCivicoAndCap(String via, int civico, int cap) {

@@ -1,7 +1,7 @@
 package Team6.Build_Week_Team_6.controllers;
 
 import Team6.Build_Week_Team_6.dto.IndirizzoDTO;
-import Team6.Build_Week_Team_6.dto.IndirizzoResponseDTO;
+import Team6.Build_Week_Team_6.entities.Indirizzo;
 import Team6.Build_Week_Team_6.exceptions.BadRequestException;
 import Team6.Build_Week_Team_6.services.IndirizzoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,18 +21,19 @@ public class IndirizzoController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public IndirizzoResponseDTO save(@RequestBody @Validated IndirizzoDTO body, BindingResult bindingResult) {
+    public Indirizzo save(@RequestBody @Validated IndirizzoDTO body, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            String message =
-                    bindingResult.getAllErrors().stream().map(s -> s.getDefaultMessage()).collect(Collectors.joining(
-                            ", "));
+            String message = bindingResult.getAllErrors()
+                    .stream()
+                    .map(error -> error.getDefaultMessage())
+                    .collect(Collectors.joining(", "));
             throw new BadRequestException(message);
         }
         return indirizzoService.save(body);
     }
 
     @GetMapping("/{indirizzoId}")
-    public IndirizzoResponseDTO findById(@PathVariable UUID indirizzoId) {
+    public Indirizzo findById(@PathVariable UUID indirizzoId) {
         return indirizzoService.findById(indirizzoId);
     }
 }
