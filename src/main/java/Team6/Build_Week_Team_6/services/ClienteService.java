@@ -63,7 +63,7 @@ public class ClienteService {
         TipoCliente tipoCliente = TipoCliente.valueOf(clienteDTO.tipoCliente());
         Cliente clienteDaModificare = findSingleClienteById(clienteId);
         clienteDaModificare.setRagioneSociale(clienteDTO.ragioneSociale());
-        clienteDaModificare.setPartivaIva(clienteDTO.partitaIva());
+        clienteDaModificare.setPartitaIva(clienteDTO.partitaIva());
         clienteDaModificare.setEmail(clienteDTO.email());
         clienteDaModificare.setPec(clienteDTO.pec());
         clienteDaModificare.setTelefono(clienteDTO.telefono());
