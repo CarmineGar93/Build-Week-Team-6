@@ -48,17 +48,19 @@ public class Cliente {
     @Column(name = "tipo_cliente", nullable = false)
     @Enumerated(EnumType.STRING)
     private TipoCliente tipoCliente;
-    @ManyToMany
-    @JoinTable(name = "indirizzi_clienti", joinColumns = @JoinColumn(name = "cliente_id"), inverseJoinColumns =
-    @JoinColumn(name = "indirizzo_id"))
-    @Setter(AccessLevel.NONE)
-    private List<Indirizzo> indirizzi;
+    @ManyToOne
+    @JoinColumn(name = "indirizzo_sede_legale_id")
+    private Indirizzo indirizzoSedeLegale;
+    @ManyToOne
+    @JoinColumn(name = "indirizzo_sede_operativa_id")
+    private Indirizzo indirizzoSedeOperativa;
     @OneToMany(mappedBy = "cliente")
     private List<Fattura> fatture;
 
     public Cliente(String ragioneSociale, String partivaIva, String email, String pec, String telefono,
                    LocalDate dataUltimoContatto, String emailContatto, String nomeContatto, String cognomeContatto,
-                   String telefonoContatto, TipoCliente tipoCliente) {
+                   String telefonoContatto, TipoCliente tipoCliente, Indirizzo indirizzoSedeLegale,
+                   Indirizzo indirizzoSedeOperativa) {
         this.ragioneSociale = ragioneSociale;
         this.partivaIva = partivaIva;
         this.email = email;
@@ -70,13 +72,11 @@ public class Cliente {
         this.cognomeContatto = cognomeContatto;
         this.telefonoContatto = telefonoContatto;
         this.tipoCliente = tipoCliente;
+        this.indirizzoSedeLegale = indirizzoSedeLegale;
+        this.indirizzoSedeOperativa = indirizzoSedeOperativa;
         this.dataInserimento = LocalDate.now();
         this.logoAziendale = "https://it.freepik.com/vettori-gratuito/misterioso-uomo-della-mafia-che-indossa-un" +
                 "-cappello_7074313.htm#fromView=keyword&page=1&position=6&uuid=623bc9a6-559f-476c-bd8a-b12a5fe6a5e7";
     }
 
-    public void addIndirizzo(Indirizzo indirizzo) {
-        if (indirizzi.size() < 2) indirizzi.add(indirizzo);
-        else throw new RuntimeException("Gli indirizzi non possono essere più di due");
-    }
 }

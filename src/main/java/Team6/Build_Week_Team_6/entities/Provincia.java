@@ -26,7 +26,7 @@ public class Provincia {
     private String nome;
     @Column(nullable = false, unique = true, length = 2)
     private String sigla;
-    @OneToMany(mappedBy = "provincia")
+    @OneToMany(mappedBy = "provincia", fetch = FetchType.EAGER)
     private List<Comune> comuni;
 
     public Provincia(String nome, String sigla) {
