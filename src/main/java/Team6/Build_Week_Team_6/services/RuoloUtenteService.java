@@ -15,7 +15,8 @@ import java.util.UUID;
 public class RuoloUtenteService {
     @Autowired
     private RuoloUtenteRepository ruoloUtenteRepository;
-@Autowired
+
+    @Autowired
     UtenteRepository utenteRepository;
     public List<RuoloUtente> findAll() {
         return this.ruoloUtenteRepository.findAll();

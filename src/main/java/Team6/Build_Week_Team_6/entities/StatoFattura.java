@@ -26,6 +26,7 @@ public class StatoFattura {
     @OneToMany(mappedBy = "statoFattura")
     private List<Fattura> fatture;
 
+
     public StatoFattura(String nome) {
         this.nome = nome;
     }
