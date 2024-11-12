@@ -38,8 +38,8 @@ public class ClienteService {
             throw new BadRequestException("Partita IVA già in uso");
         if (clienteRepository.existsByRagioneSociale(clienteDTO.ragioneSociale()))
             throw new BadRequestException("Ragione sociale già in uso");
-        Indirizzo indirizzoSedeLegale = indirizzoService.findByIdNormale(clienteDTO.indirizzoSedeLegale());
-        Indirizzo indirizzoSedeOperativa = indirizzoService.findByIdNormale(clienteDTO.indirizzoSedeOperativa());
+        Indirizzo indirizzoSedeLegale = indirizzoService.findById(clienteDTO.indirizzoSedeLegale());
+        Indirizzo indirizzoSedeOperativa = indirizzoService.findById(clienteDTO.indirizzoSedeOperativa());
         TipoCliente tipoCliente = TipoCliente.valueOf(clienteDTO.tipoCliente());
         Cliente cliente = new Cliente(clienteDTO.ragioneSociale(), clienteDTO.partitaIva(), clienteDTO.email(),
                 clienteDTO.pec(), clienteDTO.telefono(), clienteDTO.emailContatto(), clienteDTO.nomeContatto(),
@@ -58,8 +58,8 @@ public class ClienteService {
             throw new BadRequestException("Partita IVA già in uso");
         if (clienteRepository.existsByRagioneSociale(clienteDTO.ragioneSociale()))
             throw new BadRequestException("Ragione sociale già in uso");
-        Indirizzo indirizzoSedeLegale = indirizzoService.findByIdNormale(clienteDTO.indirizzoSedeLegale());
-        Indirizzo indirizzoSedeOperativa = indirizzoService.findByIdNormale(clienteDTO.indirizzoSedeOperativa());
+        Indirizzo indirizzoSedeLegale = indirizzoService.findById(clienteDTO.indirizzoSedeLegale());
+        Indirizzo indirizzoSedeOperativa = indirizzoService.findById(clienteDTO.indirizzoSedeOperativa());
         TipoCliente tipoCliente = TipoCliente.valueOf(clienteDTO.tipoCliente());
         Cliente clienteDaModificare = findSingleClienteById(clienteId);
         clienteDaModificare.setRagioneSociale(clienteDTO.ragioneSociale());
