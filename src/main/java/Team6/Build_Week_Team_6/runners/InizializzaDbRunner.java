@@ -2,9 +2,11 @@ package Team6.Build_Week_Team_6.runners;
 
 import Team6.Build_Week_Team_6.entities.Comune;
 import Team6.Build_Week_Team_6.entities.Provincia;
+import Team6.Build_Week_Team_6.entities.RuoloUtente;
 import Team6.Build_Week_Team_6.exceptions.NotFoundException;
 import Team6.Build_Week_Team_6.services.ComuneService;
 import Team6.Build_Week_Team_6.services.ProvinciaService;
+import Team6.Build_Week_Team_6.services.RuoloUtenteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
@@ -24,6 +26,8 @@ public class InizializzaDbRunner implements CommandLineRunner {
     private ComuneService comuneService;
     @Autowired
     private ProvinciaService provinciaService;
+    @Autowired
+    private RuoloUtenteService ruoloUtenteService;
 
     @Override
     public void run(String... args) {
@@ -43,8 +47,19 @@ public class InizializzaDbRunner implements CommandLineRunner {
                 System.out.println("Qualcosa è andato storto nella popolazione del db");
             }
         }
+        if (ruoloUtenteService.findAll().isEmpty()) populateRuoli();
         provinciaService.cercaProvinceNonAssociate().forEach(System.out::println);
 
+
+    }
+
+    private void populateRuoli() {
+        RuoloUtente admin = new RuoloUtente("ADMIN");
+        RuoloUtente user = new RuoloUtente("USER");
+        RuoloUtente contabile = new RuoloUtente("CONTABILE");
+        ruoloUtenteService.saveRuoloUtente(admin);
+        ruoloUtenteService.saveRuoloUtente(contabile);
+        ruoloUtenteService.saveRuoloUtente(user);
     }
 
     private void populateComuni() throws FileNotFoundException, IOException {
