@@ -48,4 +48,38 @@ public class ClienteService {
         return clienteRepository.save(cliente);
     }
 
+    public Cliente findClienteByIdAndUpdate(UUID clienteId, ClienteDTO clienteDTO) {
+        if (clienteRepository.existsByEmail(clienteDTO.email()))
+            throw new BadRequestException("Email cliente già in uso");
+        if (clienteRepository.existsByPec(clienteDTO.pec())) throw new BadRequestException("Pec cliente già in uso");
+        if (clienteRepository.existsByTelefono(clienteDTO.telefono()))
+            throw new BadRequestException("Telefono cliente già in uso");
+        if (clienteRepository.existsByPartitaIva(clienteDTO.partitaIva()))
+            throw new BadRequestException("Partita IVA già in uso");
+        if (clienteRepository.existsByRagioneSociale(clienteDTO.ragioneSociale()))
+            throw new BadRequestException("Ragione sociale già in uso");
+        Indirizzo indirizzoSedeLegale = indirizzoService.findByIdNormale(clienteDTO.indirizzoSedeLegale());
+        Indirizzo indirizzoSedeOperativa = indirizzoService.findByIdNormale(clienteDTO.indirizzoSedeOperativa());
+        TipoCliente tipoCliente = TipoCliente.valueOf(clienteDTO.tipoCliente());
+        Cliente clienteDaModificare = findSingleClienteById(clienteId);
+        clienteDaModificare.setRagioneSociale(clienteDTO.ragioneSociale());
+        clienteDaModificare.setPartivaIva(clienteDTO.partitaIva());
+        clienteDaModificare.setEmail(clienteDTO.email());
+        clienteDaModificare.setPec(clienteDTO.pec());
+        clienteDaModificare.setTelefono(clienteDTO.telefono());
+        clienteDaModificare.setEmailContatto(clienteDTO.emailContatto());
+        clienteDaModificare.setNomeContatto(clienteDTO.nomeContatto());
+        clienteDaModificare.setCognomeContatto(clienteDTO.cognomeContatto());
+        clienteDaModificare.setTelefonoContatto(clienteDTO.telefonoContatto());
+        clienteDaModificare.setTipoCliente(tipoCliente);
+        clienteDaModificare.setIndirizzoSedeLegale(indirizzoSedeLegale);
+        clienteDaModificare.setIndirizzoSedeOperativa(indirizzoSedeOperativa);
+        return clienteRepository.save(clienteDaModificare);
+    }
+
+    public void findClienteByIdAndDelete(UUID clienteId) {
+        Cliente cliente = findSingleClienteById(clienteId);
+        clienteRepository.delete(cliente);
+    }
+
 }
