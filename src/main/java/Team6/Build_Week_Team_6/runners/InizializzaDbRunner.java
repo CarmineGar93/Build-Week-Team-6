@@ -1,5 +1,11 @@
 package Team6.Build_Week_Team_6.runners;
 
+import Team6.Build_Week_Team_6.entities.Comune;
+import Team6.Build_Week_Team_6.entities.Provincia;
+import Team6.Build_Week_Team_6.exceptions.NotFoundException;
+import Team6.Build_Week_Team_6.services.ComuniService;
+import Team6.Build_Week_Team_6.services.ProvinceService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
