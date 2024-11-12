@@ -31,5 +31,9 @@ public class ProvinceService {
         return founded.getFirst();
     }
 
+    public List<Provincia> cercaProvinceNonAssociate() {
+        return provinciaRepository.cercaPerProvinceNonAssociate();
+    }
+
 
 }

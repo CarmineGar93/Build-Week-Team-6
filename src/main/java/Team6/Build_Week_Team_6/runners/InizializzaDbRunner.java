@@ -43,6 +43,7 @@ public class InizializzaDbRunner implements CommandLineRunner {
                 System.out.println("Qualcosa è andato storto nella popolazione del db");
             }
         }
+        provinceService.cercaProvinceNonAssociate().forEach(System.out::println);
 
     }
 
@@ -56,7 +57,6 @@ public class InizializzaDbRunner implements CommandLineRunner {
             String nomeProvincia = splitted[3].replaceAll(" ", "-");
             if (splitted[3].equals("Reggio nell'Emilia")) nomeProvincia = "Reggio-Emilia";
             else if (splitted[3].equals("Valle d'Aosta/Vallée d'Aoste")) nomeProvincia = "Aosta";
-            else if (splitted[3].equals("Sud Sardegna")) nomeProvincia = "Cagliari";
             try {
                 Provincia provincia = provinceService.findProvinciaByNome(nomeProvincia);
                 Comune comune = new Comune(splitted[2], provincia);
@@ -65,22 +65,6 @@ public class InizializzaDbRunner implements CommandLineRunner {
                 broken.add(line);
             }
             line = reader.readLine();
-        }
-        if (!broken.isEmpty()) {
-            broken.forEach(s -> {
-                String[] splitted = s.split(";");
-                try {
-                    Provincia provincia =
-                            provinceService.findProvinciaByNomeStartingWith(splitted[3].substring(0, 3).replaceAll(" "
-                                    , "-"));
-                    Comune comune = new Comune(splitted[2], provincia);
-                    comuniService.saveComune(comune);
-                } catch (NotFoundException e) {
-                    System.out.println(splitted[3]);
-                    System.out.println("Boh");
-
-                }
-            });
         }
     }
 
@@ -94,8 +78,23 @@ public class InizializzaDbRunner implements CommandLineRunner {
             if (splitted[0].length() != 2) {
                 broken.add(line);
             } else {
-                Provincia provincia = new Provincia(splitted[1].replaceAll(" ", "-"), splitted[0]);
-                provinceService.saveProvincia(provincia);
+                String nomeProvincia = splitted[1].replaceAll(" ", "-");
+                String sigla = splitted[0];
+                if (nomeProvincia.equals("Carbonia-Iglesias") || nomeProvincia.equals("Medio-Campidano") || nomeProvincia.equals("Ogliastra") || nomeProvincia.equals("Olbia-Tempio")) {
+                    nomeProvincia = "Sud-Sardegna";
+                    sigla = "SU";
+                } else if (nomeProvincia.equals("Bolzano")) nomeProvincia = "Bolzano/Bozen";
+                else if (nomeProvincia.equals("Monza-Brianza")) nomeProvincia = "Monza-e-della-Brianza";
+                else if (nomeProvincia.equals("Pesaro-Urbino")) nomeProvincia = "Pesaro-e-Urbino";
+                else if (nomeProvincia.equals("Verbania")) nomeProvincia = "Verbano-Cusio-Ossola";
+                else if (nomeProvincia.equals("Forli-Cesena")) nomeProvincia = "Forlì-Cesena";
+                try {
+                    Provincia provincia = new Provincia(nomeProvincia, sigla);
+                    provinceService.saveProvincia(provincia);
+                } catch (Exception ignored) {
+
+                }
+
             }
             line = reader.readLine();
         }
