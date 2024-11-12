@@ -11,8 +11,6 @@ import java.util.UUID;
 public interface ProvinciaRepository extends JpaRepository<Provincia, UUID> {
     Optional<Provincia> findByNome(String nome);
 
-    List<Provincia> findByNomeStartingWithIgnoreCase(String partial);
-
     @Query("SELECT p FROM Provincia p WHERE SIZE(p.comuni) = 0")
     List<Provincia> cercaPerProvinceNonAssociate();
 }
