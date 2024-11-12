@@ -1,11 +1,5 @@
 package Team6.Build_Week_Team_6.runners;
 
-import Team6.Build_Week_Team_6.entities.Comune;
-import Team6.Build_Week_Team_6.entities.Provincia;
-import Team6.Build_Week_Team_6.exceptions.NotFoundException;
-import Team6.Build_Week_Team_6.services.ComuniService;
-import Team6.Build_Week_Team_6.services.ProvinceService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -53,8 +47,12 @@ public class InizializzaDbRunner implements CommandLineRunner {
         String line = reader.readLine();
         while (line != null) {
             String[] splitted = line.split(";");
+            String nomeProvincia = splitted[3].replaceAll(" ", "-");
+            if (splitted[3].equals("Reggio nell'Emilia")) nomeProvincia = "Reggio-Emilia";
+            else if (splitted[3].equals("Valle d'Aosta/Vallée d'Aoste")) nomeProvincia = "Aosta";
+            else if (splitted[3].equals("Sud Sardegna")) nomeProvincia = "Cagliari";
             try {
-                Provincia provincia = provinceService.findProvinciaByNome(splitted[3]);
+                Provincia provincia = provinceService.findProvinciaByNome(nomeProvincia);
                 Comune comune = new Comune(splitted[2], provincia);
                 comuniService.saveComune(comune);
             } catch (NotFoundException e) {
@@ -66,7 +64,9 @@ public class InizializzaDbRunner implements CommandLineRunner {
             broken.forEach(s -> {
                 String[] splitted = s.split(";");
                 try {
-                    Provincia provincia = provinceService.findProvinciaByNomeStartingWith(splitted[3].substring(0, 3));
+                    Provincia provincia =
+                            provinceService.findProvinciaByNomeStartingWith(splitted[3].substring(0, 3).replaceAll(" "
+                                    , "-"));
                     Comune comune = new Comune(splitted[2], provincia);
                     comuniService.saveComune(comune);
                 } catch (NotFoundException e) {
@@ -88,7 +88,7 @@ public class InizializzaDbRunner implements CommandLineRunner {
             if (splitted[0].length() != 2) {
                 broken.add(line);
             } else {
-                Provincia provincia = new Provincia(splitted[1], splitted[0]);
+                Provincia provincia = new Provincia(splitted[1].replaceAll(" ", "-"), splitted[0]);
                 provinceService.saveProvincia(provincia);
             }
             line = reader.readLine();
