@@ -3,10 +3,12 @@ package Team6.Build_Week_Team_6.runners;
 import Team6.Build_Week_Team_6.entities.Comune;
 import Team6.Build_Week_Team_6.entities.Provincia;
 import Team6.Build_Week_Team_6.entities.RuoloUtente;
+import Team6.Build_Week_Team_6.entities.StatoFattura;
 import Team6.Build_Week_Team_6.exceptions.NotFoundException;
 import Team6.Build_Week_Team_6.services.ComuneService;
 import Team6.Build_Week_Team_6.services.ProvinciaService;
 import Team6.Build_Week_Team_6.services.RuoloUtenteService;
+import Team6.Build_Week_Team_6.services.StatoFatturaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
@@ -28,6 +30,8 @@ public class InizializzaDbRunner implements CommandLineRunner {
     private ProvinciaService provinciaService;
     @Autowired
     private RuoloUtenteService ruoloUtenteService;
+    @Autowired
+    private StatoFatturaService statoFatturaService;
 
     @Override
     public void run(String... args) {
@@ -48,6 +52,7 @@ public class InizializzaDbRunner implements CommandLineRunner {
             }
         }
         if (ruoloUtenteService.findAll().isEmpty()) populateRuoli();
+        if (statoFatturaService.findAll().isEmpty()) populateStati();
         provinciaService.cercaProvinceNonAssociate().forEach(System.out::println);
 
 
@@ -60,6 +65,20 @@ public class InizializzaDbRunner implements CommandLineRunner {
         ruoloUtenteService.saveRuoloUtente(admin);
         ruoloUtenteService.saveRuoloUtente(contabile);
         ruoloUtenteService.saveRuoloUtente(user);
+    }
+
+    private void populateStati() {
+        StatoFattura emessa = new StatoFattura("EMESSA");
+        StatoFattura accettata = new StatoFattura("ACCETTATA");
+        StatoFattura rifiutata = new StatoFattura("RIFIUTATA");
+        StatoFattura pagata = new StatoFattura("PAGATA");
+        StatoFattura scaduta = new StatoFattura("SCADUTA");
+        statoFatturaService.saveStatoFattura(emessa);
+        statoFatturaService.saveStatoFattura(accettata);
+        statoFatturaService.saveStatoFattura(pagata);
+        statoFatturaService.saveStatoFattura(rifiutata);
+        statoFatturaService.saveStatoFattura(scaduta);
+
     }
 
     private void populateComuni() throws FileNotFoundException, IOException {

@@ -10,6 +10,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -21,8 +22,11 @@ public class ClienteController {
     private ClienteService clienteService;
 
     @GetMapping
-    public List<Cliente> getAllClienti() {
-        return clienteService.findAllClienti();
+    public List<Cliente> getAllClienti(@RequestParam(required = false) Double fatturatoAnnuale,
+                                       @RequestParam(required = false) LocalDate dataInserimento,
+                                       @RequestParam(required = false) LocalDate dataUltimoContatto,
+                                       @RequestParam(required = false) String ragioneSociale) {
+        return clienteService.findAllClienti(fatturatoAnnuale, dataInserimento, dataUltimoContatto, ragioneSociale);
     }
 
     @GetMapping("/{clienteId}")

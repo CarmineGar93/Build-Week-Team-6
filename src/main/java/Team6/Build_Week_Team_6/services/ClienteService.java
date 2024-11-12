@@ -10,6 +10,7 @@ import Team6.Build_Week_Team_6.repositories.ClienteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -20,8 +21,11 @@ public class ClienteService {
     @Autowired
     private IndirizzoService indirizzoService;
 
-    public List<Cliente> findAllClienti() {
-        return clienteRepository.findAll();
+    public List<Cliente> findAllClienti(Double fatturatoAnnuale, LocalDate dataInserimento,
+                                        LocalDate dataUltimoContatto, String ragioneSociale) {
+        if (fatturatoAnnuale == null && dataInserimento == null && dataUltimoContatto == null && ragioneSociale == null)
+            return clienteRepository.findAll();
+        return clienteRepository.filtriCustom(fatturatoAnnuale, dataInserimento, dataUltimoContatto, ragioneSociale);
     }
 
     public Cliente findSingleClienteById(UUID clienteId) {

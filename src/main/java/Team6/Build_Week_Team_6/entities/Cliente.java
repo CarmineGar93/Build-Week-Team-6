@@ -34,7 +34,7 @@ public class Cliente {
     @Column(name = "data_ultimo_contatto")
     private LocalDate dataUltimoContatto;
     @Column(name = "fatturato_annuale", nullable = false)
-    private double fatturatoAnnuale;
+    private Double fatturatoAnnuale;
     @Column(name = "email_contatto", nullable = false)
     private String emailContatto;
     @Column(name = "nome_contatto", nullable = false)
@@ -61,7 +61,7 @@ public class Cliente {
                    String emailContatto, String nomeContatto, String cognomeContatto,
                    String telefonoContatto, TipoCliente tipoCliente, Indirizzo indirizzoSedeLegale,
                    Indirizzo indirizzoSedeOperativa) {
-        this.fatturatoAnnuale = 0;
+        this.fatturatoAnnuale = (double) 0;
         this.ragioneSociale = ragioneSociale;
         this.partitaIva = partitaIva;
         this.email = email;
