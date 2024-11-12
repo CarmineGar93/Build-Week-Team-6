@@ -58,4 +58,9 @@ public class IndirizzoService {
                 indirizzo.getComune().getProvincia().getNome()
         );
     }
+
+    public Indirizzo findByIdNormale(UUID id) {
+        return indirizzoRepository.findById(id).orElseThrow(() -> new NotFoundException("Indirizzo con id " + id + " " +
+                "non trovato"));
+    }
 }

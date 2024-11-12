@@ -25,13 +25,13 @@ public class Cliente {
     private UUID clienteId;
     @Column(name = "ragione_sociale", nullable = false)
     private String ragioneSociale;
-    @Column(name = "partiva_iva", nullable = false, length = 11)
+    @Column(name = "partiva_iva", nullable = false, length = 11, unique = true)
     private String partivaIva;
     @Column(nullable = false)
     private String email, pec, telefono;
     @Column(name = "data_inserimento", nullable = false)
     private LocalDate dataInserimento;
-    @Column(name = "data_ultimo_contatto", nullable = false)
+    @Column(name = "data_ultimo_contatto")
     private LocalDate dataUltimoContatto;
     @Column(name = "fatturato_annuale", nullable = false)
     private double fatturatoAnnuale;
@@ -58,9 +58,10 @@ public class Cliente {
     private List<Fattura> fatture;
 
     public Cliente(String ragioneSociale, String partivaIva, String email, String pec, String telefono,
-                   LocalDate dataUltimoContatto, String emailContatto, String nomeContatto, String cognomeContatto,
+                   String emailContatto, String nomeContatto, String cognomeContatto,
                    String telefonoContatto, TipoCliente tipoCliente, Indirizzo indirizzoSedeLegale,
                    Indirizzo indirizzoSedeOperativa) {
+        this.fatturatoAnnuale = 0;
         this.ragioneSociale = ragioneSociale;
         this.partivaIva = partivaIva;
         this.email = email;
