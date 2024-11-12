@@ -3,8 +3,8 @@ package Team6.Build_Week_Team_6.runners;
 import Team6.Build_Week_Team_6.entities.Comune;
 import Team6.Build_Week_Team_6.entities.Provincia;
 import Team6.Build_Week_Team_6.exceptions.NotFoundException;
-import Team6.Build_Week_Team_6.services.ComuniService;
-import Team6.Build_Week_Team_6.services.ProvinceService;
+import Team6.Build_Week_Team_6.services.ComuneService;
+import Team6.Build_Week_Team_6.services.ProvinciaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
@@ -21,13 +21,13 @@ import java.util.List;
 @Order(1)
 public class InizializzaDbRunner implements CommandLineRunner {
     @Autowired
-    private ComuniService comuniService;
+    private ComuneService comuneService;
     @Autowired
-    private ProvinceService provinceService;
+    private ProvinciaService provinciaService;
 
     @Override
     public void run(String... args) {
-        if (provinceService.findAllProvince().isEmpty()) {
+        if (provinciaService.findAllProvince().isEmpty()) {
             try {
                 populateProvince();
             } catch (Exception e) {
@@ -36,14 +36,14 @@ public class InizializzaDbRunner implements CommandLineRunner {
 
         }
 
-        if (comuniService.findAllComuni().isEmpty()) {
+        if (comuneService.findAllComuni().isEmpty()) {
             try {
                 populateComuni();
             } catch (Exception e) {
                 System.out.println("Qualcosa è andato storto nella popolazione del db");
             }
         }
-        provinceService.cercaProvinceNonAssociate().forEach(System.out::println);
+        provinciaService.cercaProvinceNonAssociate().forEach(System.out::println);
 
     }
 
@@ -58,9 +58,9 @@ public class InizializzaDbRunner implements CommandLineRunner {
             if (splitted[3].equals("Reggio nell'Emilia")) nomeProvincia = "Reggio-Emilia";
             else if (splitted[3].equals("Valle d'Aosta/Vallée d'Aoste")) nomeProvincia = "Aosta";
             try {
-                Provincia provincia = provinceService.findProvinciaByNome(nomeProvincia);
+                Provincia provincia = provinciaService.findProvinciaByNome(nomeProvincia);
                 Comune comune = new Comune(splitted[2], provincia);
-                comuniService.saveComune(comune);
+                comuneService.saveComune(comune);
             } catch (NotFoundException e) {
                 broken.add(line);
             }
@@ -90,7 +90,7 @@ public class InizializzaDbRunner implements CommandLineRunner {
                 else if (nomeProvincia.equals("Forli-Cesena")) nomeProvincia = "Forlì-Cesena";
                 try {
                     Provincia provincia = new Provincia(nomeProvincia, sigla);
-                    provinceService.saveProvincia(provincia);
+                    provinciaService.saveProvincia(provincia);
                 } catch (Exception ignored) {
 
                 }
@@ -106,7 +106,7 @@ public class InizializzaDbRunner implements CommandLineRunner {
                     String provaSigla = "" + splitted[1].charAt(0) + splitted[1].charAt(i);
                     try {
                         Provincia provincia = new Provincia(splitted[1], provaSigla.toUpperCase());
-                        provinceService.saveProvincia(provincia);
+                        provinciaService.saveProvincia(provincia);
                         break;
                     } catch (Exception e) {
                         System.out.println(e.getClass());
