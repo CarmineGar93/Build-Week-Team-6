@@ -14,7 +14,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Entity
 @Table(name = "indirizzi")
-@JsonIgnoreProperties({"clienti"})
+@JsonIgnoreProperties({"clientiSediLegali", "clientiSediOperative"})
 public class Indirizzo {
     @Id
     @GeneratedValue
@@ -28,8 +28,10 @@ public class Indirizzo {
     @ManyToOne
     @JoinColumn(name = "comune_id", nullable = false)
     private Comune comune;
-    @ManyToMany(mappedBy = "indirizzi")
-    private List<Cliente> clienti;
+    @OneToMany(mappedBy = "indirizzoSedeLegale")
+    private List<Cliente> clientiSediLegali;
+    @OneToMany(mappedBy = "indirizzoSedeOperativa")
+    private List<Cliente> clientiSediOperative;
 
     public Indirizzo(String via, int civico, String localita, int cap, Comune comune) {
         this.via = via;
