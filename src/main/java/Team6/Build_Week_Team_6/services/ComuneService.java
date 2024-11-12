@@ -7,6 +7,10 @@ import Team6.Build_Week_Team_6.exceptions.NotFoundException;
 import Team6.Build_Week_Team_6.repositories.ComuneRepository;
 import Team6.Build_Week_Team_6.repositories.ProvinciaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,15 +32,15 @@ public class ComuneService {
         return comuneRepository.save(comune);
     }
 
-    public List<ComuneDTO> getAllComuni() {
-        List<Comune> comuni = comuneRepository.findAll();
-        return comuni.stream()
-                .map(comune -> ComuneDTO.builder()
-                        .comuneId(comune.getComuneId())
-                        .nome(comune.getNome())
-                        .provinciaNome(comune.getProvincia().getNome())
-                        .build())
-                .collect(Collectors.toList());
+    public Page<ComuneDTO> getAllComuni(int page, int size, String sortBy) {
+        if (size > 100) size = 100;
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+        Page<Comune> comuniPage = comuneRepository.findAll(pageable);
+        return comuniPage.map(comune -> ComuneDTO.builder()
+                .comuneId(comune.getComuneId())
+                .nome(comune.getNome())
+                .provinciaNome(comune.getProvincia().getNome())
+                .build());
     }
 
     public List<ComuneDTO> getComuniByProvincia(String provinciaNome) {

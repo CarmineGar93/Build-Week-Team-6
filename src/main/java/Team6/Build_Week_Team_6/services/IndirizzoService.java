@@ -4,6 +4,7 @@ import Team6.Build_Week_Team_6.dto.IndirizzoDTO;
 import Team6.Build_Week_Team_6.dto.IndirizzoResponseDTO;
 import Team6.Build_Week_Team_6.entities.Comune;
 import Team6.Build_Week_Team_6.entities.Indirizzo;
+import Team6.Build_Week_Team_6.exceptions.BadRequestException;
 import Team6.Build_Week_Team_6.exceptions.NotFoundException;
 import Team6.Build_Week_Team_6.repositories.ComuneRepository;
 import Team6.Build_Week_Team_6.repositories.IndirizzoRepository;
@@ -21,6 +22,9 @@ public class IndirizzoService {
     private ComuneRepository comuneRepository;
 
     public IndirizzoResponseDTO save(IndirizzoDTO body) {
+        if (existsByViaAndCivicoAndCap(body.via(), body.civico(), body.cap())) {
+            throw new BadRequestException("Indirizzo già esistenze ");
+        }
         Comune comune = comuneRepository.findById(body.comuneId())
                 .orElseThrow(() -> new NotFoundException("Comune con id " + body.comuneId() + " non trovato"));
 
@@ -57,6 +61,10 @@ public class IndirizzoService {
                 indirizzo.getComune().getNome(),
                 indirizzo.getComune().getProvincia().getNome()
         );
+    }
+
+    private boolean existsByViaAndCivicoAndCap(String via, int civico, int cap) {
+        return indirizzoRepository.existsByViaAndCivicoAndCap(via, civico, cap);
     }
 
     public Indirizzo findByIdNormale(UUID id) {
