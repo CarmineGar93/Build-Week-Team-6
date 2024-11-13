@@ -13,6 +13,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -78,6 +79,11 @@ public class UtenteController {
             throw new BadRequestException(message);
         }
         return utenteService.salvaUtente(body);
+    }
+
+    @PatchMapping("/me/avatar")
+    public String uploadFotoProfilo(@AuthenticationPrincipal Utente loggato, @RequestParam("foto") MultipartFile file) {
+        return this.utenteService.uploadFotoProfilo(file, loggato.getUtenteId());
     }
 
 }

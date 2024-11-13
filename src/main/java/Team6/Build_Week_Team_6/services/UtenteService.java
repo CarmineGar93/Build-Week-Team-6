@@ -7,6 +7,8 @@ import Team6.Build_Week_Team_6.entities.Utente;
 import Team6.Build_Week_Team_6.exceptions.BadRequestException;
 import Team6.Build_Week_Team_6.exceptions.NotFoundException;
 import Team6.Build_Week_Team_6.repositories.UtenteRepository;
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -14,7 +16,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.UUID;
 
 @Service
@@ -25,6 +29,8 @@ public class UtenteService {
     private PasswordEncoder bcrypt;
     @Autowired
     private RuoloUtenteService ruoloUtenteService;
+    @Autowired
+    private Cloudinary cloudinaryUploader;
 
     public Utente findUtenteById(UUID utenteId) {
         return utenteRepository.findById(utenteId).orElseThrow(() -> new NotFoundException("Utente con id " + utenteId + " non trovato"));
@@ -90,5 +96,19 @@ public class UtenteService {
             throw new BadRequestException("L'utente ha già il ruolo scelto");
         cercato.addRuolo(ruoloDaAggiungere);
         return utenteRepository.save(cercato);
+    }
+
+    public String uploadFotoProfilo(MultipartFile file, UUID utenteId) {
+        try {
+            String url = (String) cloudinaryUploader.uploader()
+                    .upload(file.getBytes(), ObjectUtils.emptyMap())
+                    .get("url");
+            Utente trovato = this.findUtenteById(utenteId);
+            trovato.setAvatarUrl(url);
+            utenteRepository.save(trovato);
+            return url;
+        } catch (IOException e) {
+            throw new BadRequestException("Errore durante l'upload dell'immagine!");
+        }
     }
 }
