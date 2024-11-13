@@ -3,7 +3,6 @@ package Team6.Build_Week_Team_6.controllers;
 import Team6.Build_Week_Team_6.entities.Comune;
 import Team6.Build_Week_Team_6.services.ComuneService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -19,10 +18,10 @@ public class ComuneController {
 
 
     @GetMapping
-    public Page<Comune> getAllComune(@RequestParam(defaultValue = "0") int page,
-                                     @RequestParam(defaultValue = "10") int size,
-                                     @RequestParam(defaultValue = "nome") String sortBy,
-                                     @RequestParam(required = false) String provinciaNome) {
+    public Iterable<Comune> getAllComune(@RequestParam(defaultValue = "0") int page,
+                                         @RequestParam(defaultValue = "10") int size,
+                                         @RequestParam(defaultValue = "nome") String sortBy,
+                                         @RequestParam(required = false) String provinciaNome) {
         return comuneService.getAllComuni(page, size, sortBy, provinciaNome);
     }
 }

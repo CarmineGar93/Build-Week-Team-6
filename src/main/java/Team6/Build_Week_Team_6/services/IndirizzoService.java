@@ -1,7 +1,6 @@
 package Team6.Build_Week_Team_6.services;
 
 import Team6.Build_Week_Team_6.dto.IndirizzoDTO;
-import Team6.Build_Week_Team_6.dto.IndirizzoResponseDTO;
 import Team6.Build_Week_Team_6.entities.Comune;
 import Team6.Build_Week_Team_6.entities.Indirizzo;
 import Team6.Build_Week_Team_6.exceptions.BadRequestException;
