@@ -1,6 +1,6 @@
 package Team6.Build_Week_Team_6.services;
 
-import Team6.Build_Week_Team_6.entities.Fattura;
+import Team6.Build_Week_Team_6.dto.StatoFatturaDTO;
 import Team6.Build_Week_Team_6.entities.StatoFattura;
 import Team6.Build_Week_Team_6.exceptions.NotFoundException;
 import Team6.Build_Week_Team_6.repositories.FatturaRepository;
@@ -16,17 +16,17 @@ public class StatoFatturaService {
     @Autowired
     private StatoFatturaRepository statoFatturaRepository;
     @Autowired
-    FatturaRepository fatturaRepository;
+    private FatturaRepository fatturaRepository;
 
     public List<StatoFattura> findAll() {
         return this.statoFatturaRepository.findAll();
     }
 
     public StatoFattura findById(UUID statoFatturaId) {
-        return this.statoFatturaRepository.findById(statoFatturaId)  .orElseThrow(() -> new NotFoundException("err"));
+        return this.statoFatturaRepository.findById(statoFatturaId).orElseThrow(() -> new NotFoundException("err"));
     }
-    public StatoFattura createStatoFattura(String nome) {
-        StatoFattura statoFattura = new StatoFattura(nome);
+
+    public StatoFattura saveStatoFattura(StatoFattura statoFattura) {
         return this.statoFatturaRepository.save(statoFattura);
     }
 
@@ -36,7 +36,8 @@ public class StatoFatturaService {
     }
 
 
-    public StatoFattura saveStatoFattura(StatoFattura statoFattura) {
+    public StatoFattura createStatoFattura(StatoFatturaDTO statoFatturaDTO) {
+        StatoFattura statoFattura = new StatoFattura(statoFatturaDTO.nome());
         return this.statoFatturaRepository.save(statoFattura);
     }
 

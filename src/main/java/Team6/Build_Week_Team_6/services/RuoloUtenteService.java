@@ -1,5 +1,6 @@
 package Team6.Build_Week_Team_6.services;
 
+import Team6.Build_Week_Team_6.dto.RuoloUtenteDTO;
 import Team6.Build_Week_Team_6.entities.RuoloUtente;
 import Team6.Build_Week_Team_6.entities.Utente;
 import Team6.Build_Week_Team_6.exceptions.NotFoundException;
@@ -14,19 +15,21 @@ import java.util.UUID;
 @Service
 public class RuoloUtenteService {
     @Autowired
+    UtenteRepository utenteRepository;
+    @Autowired
     private RuoloUtenteRepository ruoloUtenteRepository;
 
-    @Autowired
-    UtenteRepository utenteRepository;
     public List<RuoloUtente> findAll() {
         return this.ruoloUtenteRepository.findAll();
     }
 
     public RuoloUtente findById(UUID ruoloUtenteId) {
-        return this.ruoloUtenteRepository.findById(ruoloUtenteId)  .orElseThrow(() -> new NotFoundException("Ruolo utente " + ruoloUtenteId + " non trovato"));
+        return this.ruoloUtenteRepository.findById(ruoloUtenteId).orElseThrow(() -> new NotFoundException("Ruolo " +
+                "utente " + ruoloUtenteId + " non trovato"));
     }
-    public RuoloUtente createRuoloUtente(String nome) {
-        RuoloUtente ruoloUtente = new RuoloUtente(nome);
+
+    public RuoloUtente createRuoloUtente(RuoloUtenteDTO ruoloUtenteDTO) {
+        RuoloUtente ruoloUtente = new RuoloUtente(ruoloUtenteDTO.nome());
         return this.ruoloUtenteRepository.save(ruoloUtente);
     }
 
@@ -34,10 +37,10 @@ public class RuoloUtenteService {
         RuoloUtente ruoloUtente = this.findById(ruoloUtenteId);
         this.ruoloUtenteRepository.delete(ruoloUtente);
     }
+
     public RuoloUtente saveRuoloUtente(RuoloUtente ruoloUtente) {
         return this.ruoloUtenteRepository.save(ruoloUtente);
     }
-
 
 
     public Utente assegnaRuoloAUtente(UUID utenteId, UUID ruoloUtenteId) {
