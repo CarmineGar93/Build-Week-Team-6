@@ -33,6 +33,11 @@ public class RuoloUtenteService {
         return this.ruoloUtenteRepository.save(ruoloUtente);
     }
 
+    public RuoloUtente findRuoloUtenteByNome(String nome) {
+        return ruoloUtenteRepository.findByNome(nome).orElseThrow(() -> new NotFoundException("Ruolo " + nome + " non" +
+                " trovato"));
+    }
+
     public void deleteRuoloUtente(UUID ruoloUtenteId) {
         RuoloUtente ruoloUtente = this.findById(ruoloUtenteId);
         this.ruoloUtenteRepository.delete(ruoloUtente);
