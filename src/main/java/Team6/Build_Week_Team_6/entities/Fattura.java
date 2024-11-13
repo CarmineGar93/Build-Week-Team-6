@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
-import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -34,10 +33,9 @@ public class Fattura {
     private Cliente cliente;
 
 
-
-    public Fattura(long numero, LocalDate data, double importo, StatoFattura statoFattura, Cliente cliente) {
+    public Fattura(long numero, double importo, StatoFattura statoFattura, Cliente cliente) {
         this.numero = numero;
-        this.data = data;
+        this.data = LocalDate.now();
         this.importo = importo;
         this.statoFattura = statoFattura;
         this.cliente = cliente;

@@ -1,3 +1,4 @@
+// FatturaService.java
 package Team6.Build_Week_Team_6.services;
 
 import Team6.Build_Week_Team_6.dto.FatturaDTO;
@@ -14,6 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -22,69 +24,77 @@ import java.util.UUID;
 @Service
 public class FatturaService {
     @Autowired
-    ClienteRepository clienteRepository;
+    private ClienteRepository clienteRepository;
     @Autowired
     private FatturaRepository fatturaRepository;
     @Autowired
     private StatoFatturaRepository statoFatturaRepository;
 
-    public Page<Fattura> getFatture(int page, int size, String sortBy, UUID clienteId, UUID statoId,
-                                    LocalDate data, Integer anno, Double importoMin, Double importoMax) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+    public Page<Fattura> getFatture(int page, int size, String sortBy, String sortDir,
+                                    UUID clienteId, UUID statoId, LocalDate data,
+                                    Integer anno, Double importoMin, Double importoMax) {
+
+        if (importoMin != null && importoMax != null && importoMin > importoMax) {
+            throw new BadRequestException("L'importo minimo non può essere maggiore dell'importo massimo");
+        }
+
+        Specification<Fattura> spec = Specification.where(null);
 
         if (clienteId != null) {
             if (!clienteRepository.existsById(clienteId)) {
                 throw new NotFoundException("Cliente non trovato");
             }
-            return fatturaRepository.findByCliente_ClienteId(clienteId, pageable);
+            spec = spec.and((root, query, cb) ->
+                    cb.equal(root.get("cliente").get("clienteId"), clienteId));
         }
 
         if (statoId != null) {
             if (!statoFatturaRepository.existsById(statoId)) {
                 throw new NotFoundException("Stato Fattura non trovato");
             }
-            return fatturaRepository.findByStatoFattura_StatoFatturaId(statoId, pageable);
+            spec = spec.and((root, query, cb) ->
+                    cb.equal(root.get("statoFattura").get("statoFatturaId"), statoId));
         }
 
         if (data != null) {
-            return fatturaRepository.findByData(data, pageable);
+            spec = spec.and((root, query, cb) ->
+                    cb.equal(root.get("data"), data));
         }
 
         if (anno != null) {
             LocalDate inizioAnno = LocalDate.of(anno, 1, 1);
             LocalDate fineAnno = LocalDate.of(anno, 12, 31);
-            return fatturaRepository.findByDataBetween(inizioAnno, fineAnno, pageable);
-        }
-
-        if (importoMin != null && importoMax != null) {
-            if (importoMin > importoMax) {
-                throw new BadRequestException("L'importo minimo non può essere maggiore dell'importo massimo");
-            }
-            return fatturaRepository.findByImportoBetween(importoMin, importoMax, pageable);
+            spec = spec.and((root, query, cb) ->
+                    cb.between(root.get("data"), inizioAnno, fineAnno));
         }
 
         if (importoMin != null) {
-            return fatturaRepository.findByImportoGreaterThanEqual(importoMin, pageable);
+            spec = spec.and((root, query, cb) ->
+                    cb.greaterThanOrEqualTo(root.get("importo"), importoMin));
         }
 
         if (importoMax != null) {
-            return fatturaRepository.findByImportoLessThanEqual(importoMax, pageable);
+            spec = spec.and((root, query, cb) ->
+                    cb.lessThanOrEqualTo(root.get("importo"), importoMax));
         }
 
-        return fatturaRepository.findAll(pageable);
+        Sort sort = Sort.by(Sort.Direction.fromString(sortDir), sortBy);
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        return fatturaRepository.findAll(spec, pageable);
     }
 
     public Fattura save(FatturaDTO body) {
+
         Cliente cliente = clienteRepository.findById(body.clienteId())
                 .orElseThrow(() -> new NotFoundException("Cliente non trovato"));
 
+        StatoFattura statoEmessa = statoFatturaRepository.findByNome("EMESSA")
+                .orElseThrow(() -> new NotFoundException("Stato fattura EMESSA non trovato"));
         Long nuovoNumero = generaNuovoNumeroFattura();
+        cliente.setFatturatoAnnuale(cliente.getFatturatoAnnuale() + body.importo());
 
-        Fattura fattura = new Fattura();
-        fattura.setNumero(nuovoNumero);
-        fattura.setData(body.data());
-        fattura.setImporto(body.importo());
-        fattura.setCliente(cliente);
+        Fattura fattura = new Fattura(nuovoNumero, body.importo(), statoEmessa, cliente);
 
         return fatturaRepository.save(fattura);
     }

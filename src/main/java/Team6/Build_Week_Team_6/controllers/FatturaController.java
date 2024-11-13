@@ -1,3 +1,4 @@
+// FatturaController.java
 package Team6.Build_Week_Team_6.controllers;
 
 import Team6.Build_Week_Team_6.dto.FatturaDTO;
@@ -27,18 +28,21 @@ public class FatturaController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "data") String sortBy,
+            @RequestParam(defaultValue = "ASC") String sortDir,
             @RequestParam(required = false) UUID clienteId,
             @RequestParam(required = false) UUID statoId,
             @RequestParam(required = false) LocalDate data,
             @RequestParam(required = false) Integer anno,
             @RequestParam(required = false) Double importoMin,
             @RequestParam(required = false) Double importoMax) {
-        return fatturaService.getFatture(page, size, sortBy, clienteId, statoId, data, anno, importoMin, importoMax);
+        return fatturaService.getFatture(page, size, sortBy, sortDir,
+                clienteId, statoId, data, anno, importoMin, importoMax);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Fattura save(@RequestBody @Validated FatturaDTO body, BindingResult validationResult) {
+    public Fattura save(@RequestBody @Validated FatturaDTO body,
+                        BindingResult validationResult) {
         if (validationResult.hasErrors()) {
             String message = validationResult.getAllErrors().stream()
                     .map(error -> error.getDefaultMessage())
@@ -49,9 +53,10 @@ public class FatturaController {
     }
 
     @PatchMapping("/stato/{fatturaId}")
-    public Fattura updateStato(@PathVariable UUID fatturaId,
-                               @RequestBody @Validated StatoFatturaUpdateDTO body,
-                               BindingResult validationResult) {
+    public Fattura updateStato(
+            @PathVariable UUID fatturaId,
+            @RequestBody @Validated StatoFatturaUpdateDTO body,
+            BindingResult validationResult) {
         if (validationResult.hasErrors()) {
             String message = validationResult.getAllErrors().stream()
                     .map(error -> error.getDefaultMessage())
@@ -67,4 +72,3 @@ public class FatturaController {
         fatturaService.findByIdAndDelete(fatturaId);
     }
 }
-
