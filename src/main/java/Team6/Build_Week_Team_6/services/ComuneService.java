@@ -32,15 +32,11 @@ public class ComuneService {
         return comuneRepository.save(comune);
     }
 
-    public Page<ComuneDTO> getAllComuni(int page, int size, String sortBy) {
+    public Page<Comune> getAllComuni(int page, int size, String sortBy, String provinciaNome) {
         if (size > 100) size = 100;
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
-        Page<Comune> comuniPage = comuneRepository.findAll(pageable);
-        return comuniPage.map(comune -> ComuneDTO.builder()
-                .comuneId(comune.getComuneId())
-                .nome(comune.getNome())
-                .provinciaNome(comune.getProvincia().getNome())
-                .build());
+        return comuneRepository.findAll(pageable);
+
     }
 
     public List<ComuneDTO> getComuniByProvincia(String provinciaNome) {
