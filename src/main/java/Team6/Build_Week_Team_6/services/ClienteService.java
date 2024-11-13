@@ -28,21 +28,23 @@ public class ClienteService {
     @Autowired
     private List<DateTimeFormatter> formatters;
 
-    public List<Cliente> findAllClienti(Double fatturatoAnnuale, LocalDate dataInserimento,
-                                        LocalDate dataUltimoContatto, String ragioneSociale, String sortBy) {
+    public List<Cliente> findAllClienti(Double fatturatoAnnuale, String inserimento,
+                                        String ultimoContatto, String ragioneSociale, String sortBy) {
         if (sortBy.equals("provincia")) sortBy = "indirizzoSedeLegale.comune.provincia.nome";
-        if (fatturatoAnnuale == null && dataInserimento == null && dataUltimoContatto == null && ragioneSociale == null)
+        if (fatturatoAnnuale == null && inserimento == null && ultimoContatto == null && ragioneSociale == null)
             return clienteRepository.findAll(Sort.by(sortBy));
         Specification<Cliente> specification = Specification.where(null);
         if (fatturatoAnnuale != null) {
             specification =
                     specification.and(((root, query, criteriaBuilder) -> criteriaBuilder.greaterThanOrEqualTo(root.get("fatturatoAnnuale"), fatturatoAnnuale)));
         }
-        if (dataInserimento != null) {
+        if (inserimento != null) {
+            LocalDate dataInserimento = validateDate(inserimento);
             specification = specification.and(((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get(
                     "dataInserimento"), dataInserimento)));
         }
-        if (dataUltimoContatto != null) {
+        if (ultimoContatto != null) {
+            LocalDate dataUltimoContatto = validateDate(ultimoContatto);
             specification = specification.and(((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get(
                     "dataUltimoContatto"), dataUltimoContatto)));
         }
