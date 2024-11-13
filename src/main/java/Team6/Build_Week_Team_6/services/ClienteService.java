@@ -14,6 +14,8 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.UUID;
 
@@ -23,6 +25,8 @@ public class ClienteService {
     private ClienteRepository clienteRepository;
     @Autowired
     private IndirizzoService indirizzoService;
+    @Autowired
+    private List<DateTimeFormatter> formatters;
 
     public List<Cliente> findAllClienti(Double fatturatoAnnuale, LocalDate dataInserimento,
                                         LocalDate dataUltimoContatto, String ragioneSociale, String sortBy) {
@@ -109,12 +113,25 @@ public class ClienteService {
 
     public Cliente updateUltimoContatto(UUID cliente, UpdateUltimoContattoDTO body) {
         Cliente cercato = findSingleClienteById(cliente);
-        if (body.ultimoContatto().isBefore(cercato.getDataInserimento()))
+        LocalDate data = validateDate(body.ultimoContatto());
+        if (data.isBefore(cercato.getDataInserimento()))
             throw new BadRequestException("La data dell'ultimo contatto non puo venire prima della data inserimento " +
                     "cliente");
-        if (body.ultimoContatto().isAfter(LocalDate.now()))
+        if (data.isAfter(LocalDate.now()))
             throw new BadRequestException("La data non può essere nel futuro");
-        cercato.setDataUltimoContatto(body.ultimoContatto());
+        cercato.setDataUltimoContatto(data);
         return clienteRepository.save(cercato);
+    }
+
+    private LocalDate validateDate(String date) {
+        for (DateTimeFormatter formatter : formatters) {
+            try {
+                LocalDate dataFormattata = LocalDate.parse(date, formatter);
+                return dataFormattata;
+            } catch (DateTimeParseException ignored) {
+
+            }
+        }
+        throw new BadRequestException("Formato data non supportato");
     }
 }
