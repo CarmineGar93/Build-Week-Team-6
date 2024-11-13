@@ -25,8 +25,10 @@ public class ClienteController {
     public List<Cliente> getAllClienti(@RequestParam(required = false) Double fatturatoAnnuale,
                                        @RequestParam(required = false) LocalDate dataInserimento,
                                        @RequestParam(required = false) LocalDate dataUltimoContatto,
-                                       @RequestParam(required = false) String ragioneSociale) {
-        return clienteService.findAllClienti(fatturatoAnnuale, dataInserimento, dataUltimoContatto, ragioneSociale);
+                                       @RequestParam(required = false) String ragioneSociale,
+                                       @RequestParam(required = false) String sortBy) {
+        return clienteService.findAllClienti(fatturatoAnnuale, dataInserimento, dataUltimoContatto, ragioneSociale,
+                sortBy);
     }
 
     @GetMapping("/{clienteId}")
