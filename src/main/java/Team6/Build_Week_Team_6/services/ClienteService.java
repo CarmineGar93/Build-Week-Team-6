@@ -1,6 +1,7 @@
 package Team6.Build_Week_Team_6.services;
 
 import Team6.Build_Week_Team_6.dto.ClienteDTO;
+import Team6.Build_Week_Team_6.dto.UpdateUltimoContattoDTO;
 import Team6.Build_Week_Team_6.entities.Cliente;
 import Team6.Build_Week_Team_6.entities.Indirizzo;
 import Team6.Build_Week_Team_6.enums.TipoCliente;
@@ -8,6 +9,7 @@ import Team6.Build_Week_Team_6.exceptions.BadRequestException;
 import Team6.Build_Week_Team_6.exceptions.NotFoundException;
 import Team6.Build_Week_Team_6.repositories.ClienteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -23,9 +25,10 @@ public class ClienteService {
     private IndirizzoService indirizzoService;
 
     public List<Cliente> findAllClienti(Double fatturatoAnnuale, LocalDate dataInserimento,
-                                        LocalDate dataUltimoContatto, String ragioneSociale) {
+                                        LocalDate dataUltimoContatto, String ragioneSociale, String sortBy) {
+        if (sortBy.equals("provincia")) sortBy = "indirizzoSedeLegale.comune.provincia.nome";
         if (fatturatoAnnuale == null && dataInserimento == null && dataUltimoContatto == null && ragioneSociale == null)
-            return clienteRepository.findAll();
+            return clienteRepository.findAll(Sort.by(sortBy));
         Specification<Cliente> specification = Specification.where(null);
         if (fatturatoAnnuale != null) {
             specification =
@@ -43,7 +46,7 @@ public class ClienteService {
             specification = specification.and(((root, query, criteriaBuilder) -> criteriaBuilder.like(root.get(
                     "ragioneSociale"), ragioneSociale)));
         }
-        return clienteRepository.findAll(specification);
+        return clienteRepository.findAll(specification, Sort.by(sortBy));
     }
 
     public Cliente findSingleClienteById(UUID clienteId) {
@@ -104,4 +107,14 @@ public class ClienteService {
         clienteRepository.delete(cliente);
     }
 
+    public Cliente updateUltimoContatto(UUID cliente, UpdateUltimoContattoDTO body) {
+        Cliente cercato = findSingleClienteById(cliente);
+        if (body.ultimoContatto().isBefore(cercato.getDataInserimento()))
+            throw new BadRequestException("La data dell'ultimo contatto non puo venire prima della data inserimento " +
+                    "cliente");
+        if (body.ultimoContatto().isAfter(LocalDate.now()))
+            throw new BadRequestException("La data non può essere nel futuro");
+        cercato.setDataUltimoContatto(body.ultimoContatto());
+        return clienteRepository.save(cercato);
+    }
 }

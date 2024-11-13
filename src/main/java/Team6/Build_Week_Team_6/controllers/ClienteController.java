@@ -1,6 +1,7 @@
 package Team6.Build_Week_Team_6.controllers;
 
 import Team6.Build_Week_Team_6.dto.ClienteDTO;
+import Team6.Build_Week_Team_6.dto.UpdateUltimoContattoDTO;
 import Team6.Build_Week_Team_6.entities.Cliente;
 import Team6.Build_Week_Team_6.exceptions.BadRequestException;
 import Team6.Build_Week_Team_6.services.ClienteService;
@@ -25,8 +26,10 @@ public class ClienteController {
     public List<Cliente> getAllClienti(@RequestParam(required = false) Double fatturatoAnnuale,
                                        @RequestParam(required = false) LocalDate dataInserimento,
                                        @RequestParam(required = false) LocalDate dataUltimoContatto,
-                                       @RequestParam(required = false) String ragioneSociale) {
-        return clienteService.findAllClienti(fatturatoAnnuale, dataInserimento, dataUltimoContatto, ragioneSociale);
+                                       @RequestParam(required = false) String ragioneSociale,
+                                       @RequestParam(required = false) String sortBy) {
+        return clienteService.findAllClienti(fatturatoAnnuale, dataInserimento, dataUltimoContatto, ragioneSociale,
+                sortBy);
     }
 
     @GetMapping("/{clienteId}")
@@ -62,6 +65,19 @@ public class ClienteController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void cancellaCliente(@PathVariable UUID clienteId) {
         clienteService.findClienteByIdAndDelete(clienteId);
+    }
+
+    @PatchMapping("/{clienteId}/ultimoContatto")
+    public Cliente updateUltimoContatto(@PathVariable UUID clienteId,
+                                        @RequestBody @Validated UpdateUltimoContattoDTO body,
+                                        BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            String message =
+                    bindingResult.getAllErrors().stream().map(s -> s.getDefaultMessage()).collect(Collectors.joining(
+                            ", "));
+            throw new BadRequestException(message);
+        }
+        return clienteService.updateUltimoContatto(clienteId, body);
     }
 
 }
