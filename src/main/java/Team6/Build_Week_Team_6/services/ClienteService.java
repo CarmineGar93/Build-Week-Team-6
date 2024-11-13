@@ -8,6 +8,7 @@ import Team6.Build_Week_Team_6.exceptions.BadRequestException;
 import Team6.Build_Week_Team_6.exceptions.NotFoundException;
 import Team6.Build_Week_Team_6.repositories.ClienteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -25,7 +26,24 @@ public class ClienteService {
                                         LocalDate dataUltimoContatto, String ragioneSociale) {
         if (fatturatoAnnuale == null && dataInserimento == null && dataUltimoContatto == null && ragioneSociale == null)
             return clienteRepository.findAll();
-        return clienteRepository.filtriCustom(fatturatoAnnuale, dataInserimento, dataUltimoContatto, ragioneSociale);
+        Specification<Cliente> specification = Specification.where(null);
+        if (fatturatoAnnuale != null) {
+            specification =
+                    specification.and(((root, query, criteriaBuilder) -> criteriaBuilder.greaterThanOrEqualTo(root.get("fatturatoAnnuale"), fatturatoAnnuale)));
+        }
+        if (dataInserimento != null) {
+            specification = specification.and(((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get(
+                    "dataInserimento"), dataInserimento)));
+        }
+        if (dataUltimoContatto != null) {
+            specification = specification.and(((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get(
+                    "dataUltimoContatto"), dataUltimoContatto)));
+        }
+        if (ragioneSociale != null) {
+            specification = specification.and(((root, query, criteriaBuilder) -> criteriaBuilder.like(root.get(
+                    "ragioneSociale"), ragioneSociale)));
+        }
+        return clienteRepository.findAll(specification);
     }
 
     public Cliente findSingleClienteById(UUID clienteId) {
