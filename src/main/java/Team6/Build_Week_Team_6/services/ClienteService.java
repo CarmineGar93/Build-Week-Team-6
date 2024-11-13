@@ -1,6 +1,7 @@
 package Team6.Build_Week_Team_6.services;
 
 import Team6.Build_Week_Team_6.dto.ClienteDTO;
+import Team6.Build_Week_Team_6.dto.UpdateUltimoContattoDTO;
 import Team6.Build_Week_Team_6.entities.Cliente;
 import Team6.Build_Week_Team_6.entities.Indirizzo;
 import Team6.Build_Week_Team_6.enums.TipoCliente;
@@ -106,4 +107,14 @@ public class ClienteService {
         clienteRepository.delete(cliente);
     }
 
+    public Cliente updateUltimoContatto(UUID cliente, UpdateUltimoContattoDTO body) {
+        Cliente cercato = findSingleClienteById(cliente);
+        if (body.ultimoContatto().isBefore(cercato.getDataInserimento()))
+            throw new BadRequestException("La data dell'ultimo contatto non puo venire prima della data inserimento " +
+                    "cliente");
+        if (body.ultimoContatto().isAfter(LocalDate.now()))
+            throw new BadRequestException("La data non può essere nel futuro");
+        cercato.setDataUltimoContatto(body.ultimoContatto());
+        return clienteRepository.save(cercato);
+    }
 }
