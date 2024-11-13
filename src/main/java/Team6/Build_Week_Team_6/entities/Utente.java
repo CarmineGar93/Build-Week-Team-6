@@ -10,6 +10,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
@@ -30,7 +31,7 @@ public class Utente implements UserDetails {
     private String username, email, password, nome, cognome;
     @Column(name = "avatar_url", nullable = false)
     private String avatarUrl;
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "utenti_ruoli", joinColumns = @JoinColumn(name = "utente_id"), inverseJoinColumns =
     @JoinColumn(name = "ruolo_id"))
     @Setter(AccessLevel.NONE)
@@ -44,6 +45,7 @@ public class Utente implements UserDetails {
         this.cognome = cognome;
         this.avatarUrl = "https://ui-avatars.com/api/?name=" +
                 nome + "+" + cognome;
+        this.ruoli = new ArrayList<>();
     }
 
     public void addRuolo(RuoloUtente ruoloUtente) {

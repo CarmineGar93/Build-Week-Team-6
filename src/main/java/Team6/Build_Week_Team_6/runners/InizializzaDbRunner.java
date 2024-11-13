@@ -1,17 +1,13 @@
 package Team6.Build_Week_Team_6.runners;
 
-import Team6.Build_Week_Team_6.entities.Comune;
-import Team6.Build_Week_Team_6.entities.Provincia;
-import Team6.Build_Week_Team_6.entities.RuoloUtente;
-import Team6.Build_Week_Team_6.entities.StatoFattura;
+import Team6.Build_Week_Team_6.entities.*;
 import Team6.Build_Week_Team_6.exceptions.NotFoundException;
-import Team6.Build_Week_Team_6.services.ComuneService;
-import Team6.Build_Week_Team_6.services.ProvinciaService;
-import Team6.Build_Week_Team_6.services.RuoloUtenteService;
-import Team6.Build_Week_Team_6.services.StatoFatturaService;
+import Team6.Build_Week_Team_6.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
@@ -32,6 +28,21 @@ public class InizializzaDbRunner implements CommandLineRunner {
     private RuoloUtenteService ruoloUtenteService;
     @Autowired
     private StatoFatturaService statoFatturaService;
+    @Autowired
+    private UtenteService utenteService;
+    @Autowired
+    private PasswordEncoder bcrypt;
+    @Autowired
+    @Value("${admin.nome}")
+    private String nomeAdmin;
+    @Value("${admin.cognome}")
+    private String cognomeAdmin;
+    @Value("${admin.username}")
+    private String usernameAdmin;
+    @Value("${admin.email}")
+    private String emailAdmin;
+    @Value("${admin.password}")
+    private String passwordAdmin;
 
     @Override
     public void run(String... args) {
@@ -53,9 +64,17 @@ public class InizializzaDbRunner implements CommandLineRunner {
         }
         if (ruoloUtenteService.findAll().isEmpty()) populateRuoli();
         if (statoFatturaService.findAll().isEmpty()) populateStati();
+        if (utenteService.getAllUsers(0, 100000, "nome").isEmpty()) aggiungiAdmin();
         provinciaService.cercaProvinceNonAssociate().forEach(System.out::println);
 
 
+    }
+
+    private void aggiungiAdmin() {
+        Utente admin = new Utente(usernameAdmin, emailAdmin, bcrypt.encode(passwordAdmin), nomeAdmin, cognomeAdmin);
+        RuoloUtente ruoloAdmin = ruoloUtenteService.findRuoloUtenteByNome("ADMIN");
+        admin.addRuolo(ruoloAdmin);
+        utenteService.creaAdmin(admin);
     }
 
     private void populateRuoli() {
