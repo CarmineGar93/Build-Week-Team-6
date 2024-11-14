@@ -9,6 +9,7 @@ import Team6.Build_Week_Team_6.services.FatturaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -41,6 +42,7 @@ public class FatturaController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'CONTABILE')")
     public Fattura save(@RequestBody @Validated FatturaDTO body,
                         BindingResult validationResult) {
         if (validationResult.hasErrors()) {
@@ -53,6 +55,7 @@ public class FatturaController {
     }
 
     @PatchMapping("/stato/{fatturaId}")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'CONTABILE')")
     public Fattura updateStato(
             @PathVariable UUID fatturaId,
             @RequestBody @Validated StatoFatturaUpdateDTO body,
@@ -67,6 +70,7 @@ public class FatturaController {
     }
 
     @DeleteMapping("/{fatturaId}")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'CONTABILE')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable UUID fatturaId) {
         fatturaService.findByIdAndDelete(fatturaId);

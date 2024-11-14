@@ -86,4 +86,17 @@ public class UtenteController {
         return this.utenteService.uploadFotoProfilo(file, loggato.getUtenteId());
     }
 
+    @DeleteMapping("/{utenteId}/ruolo")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public Utente rimuoviRuoloUtente(@PathVariable UUID utenteId, @RequestBody @Validated RuoloUtenteDTO body,
+                                     BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            String message =
+                    bindingResult.getAllErrors().stream().map(s -> s.getDefaultMessage()).collect(Collectors.joining(
+                            ", "));
+            throw new BadRequestException(message);
+        }
+        return utenteService.rimuoviRuolo(body, utenteId);
+    }
+
 }

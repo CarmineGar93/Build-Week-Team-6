@@ -111,4 +111,13 @@ public class UtenteService {
             throw new BadRequestException("Errore durante l'upload dell'immagine!");
         }
     }
+
+    public Utente rimuoviRuolo(RuoloUtenteDTO body, UUID utenteId) {
+        Utente cercato = findUtenteById(utenteId);
+        RuoloUtente ruoloDaRimuovere = ruoloUtenteService.findRuoloUtenteByNome(body.nome());
+        boolean rimosso =
+                cercato.getRuoli().removeIf(ruoloUtente -> ruoloUtente.getRuoloUtenteId().equals(ruoloDaRimuovere.getRuoloUtenteId()));
+        if (rimosso) return utenteRepository.save(cercato);
+        throw new BadRequestException("L'utente non possiede il ruolo fornito");
+    }
 }

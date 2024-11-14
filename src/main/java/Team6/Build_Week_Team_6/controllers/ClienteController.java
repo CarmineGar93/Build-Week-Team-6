@@ -7,6 +7,7 @@ import Team6.Build_Week_Team_6.exceptions.BadRequestException;
 import Team6.Build_Week_Team_6.services.ClienteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -38,6 +39,7 @@ public class ClienteController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'USER')")
     public Cliente salvaCliente(@RequestBody @Validated ClienteDTO body, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             String message =
@@ -49,6 +51,7 @@ public class ClienteController {
     }
 
     @PutMapping("/{clienteId}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public Cliente modificaCliente(@PathVariable UUID clienteId, @RequestBody @Validated ClienteDTO body,
                                    BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
@@ -61,6 +64,7 @@ public class ClienteController {
     }
 
     @DeleteMapping("/{clienteId}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void cancellaCliente(@PathVariable UUID clienteId) {
         clienteService.findClienteByIdAndDelete(clienteId);

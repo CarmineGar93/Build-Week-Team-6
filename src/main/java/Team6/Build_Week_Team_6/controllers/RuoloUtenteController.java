@@ -7,6 +7,7 @@ import Team6.Build_Week_Team_6.repositories.RuoloUtenteRepository;
 import Team6.Build_Week_Team_6.services.RuoloUtenteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -29,6 +30,7 @@ public class RuoloUtenteController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasAuthority('ADMIN')")
     public RuoloUtente createRuoloUtente(@RequestBody @Validated RuoloUtenteDTO body, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             String message =
