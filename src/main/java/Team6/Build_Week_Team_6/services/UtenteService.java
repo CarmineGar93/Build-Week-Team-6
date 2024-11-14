@@ -7,6 +7,7 @@ import Team6.Build_Week_Team_6.entities.Utente;
 import Team6.Build_Week_Team_6.exceptions.BadRequestException;
 import Team6.Build_Week_Team_6.exceptions.NotFoundException;
 import Team6.Build_Week_Team_6.repositories.UtenteRepository;
+import Team6.Build_Week_Team_6.tools.MailgunSender;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +32,8 @@ public class UtenteService {
     private RuoloUtenteService ruoloUtenteService;
     @Autowired
     private Cloudinary cloudinaryUploader;
+    @Autowired
+    private MailgunSender mailgunSender;
 
     public Utente findUtenteById(UUID utenteId) {
         return utenteRepository.findById(utenteId).orElseThrow(() -> new NotFoundException("Utente con id " + utenteId + " non trovato"));
@@ -51,6 +54,7 @@ public class UtenteService {
                 body.cognome());
         RuoloUtente ruoloUser = ruoloUtenteService.findRuoloUtenteByNome("USER");
         utente.addRuolo(ruoloUser);
+        mailgunSender.sendRegistrationEmail(utente);
         return utenteRepository.save(utente);
     }
 

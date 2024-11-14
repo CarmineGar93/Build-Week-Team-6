@@ -56,4 +56,6 @@ public class Utente implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return ruoli.stream().map(ruoloUtente -> new SimpleGrantedAuthority(ruoloUtente.getNome())).toList();
     }
+
+
 }
