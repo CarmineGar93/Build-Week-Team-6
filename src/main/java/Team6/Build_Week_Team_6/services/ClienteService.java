@@ -30,9 +30,15 @@ public class ClienteService {
 
     public List<Cliente> findAllClienti(Double fatturatoAnnuale, String inserimento,
                                         String ultimoContatto, String ragioneSociale, String sortBy) {
+        String direction = "ASC";
+        if (sortBy.equals("fatturatoAnnuale") || sortBy.equals("dataInserimento") || sortBy.equals("dataUltimoContatto"
+        )) {
+            direction = "DESC";
+        }
         if (sortBy.equals("provincia")) sortBy = "indirizzoSedeLegale.comune.provincia.nome";
         if (fatturatoAnnuale == null && inserimento == null && ultimoContatto == null && ragioneSociale == null)
-            return clienteRepository.findAll(Sort.by(sortBy));
+            return clienteRepository.findAll(Sort.by(direction.equalsIgnoreCase("ASC") ?
+                    Sort.Direction.ASC : Sort.Direction.DESC, sortBy));
         Specification<Cliente> specification = Specification.where(null);
         if (fatturatoAnnuale != null) {
             specification =
@@ -52,7 +58,8 @@ public class ClienteService {
             specification = specification.and(((root, query, criteriaBuilder) -> criteriaBuilder.like(root.get(
                     "ragioneSociale"), ragioneSociale)));
         }
-        return clienteRepository.findAll(specification, Sort.by(sortBy));
+        return clienteRepository.findAll(specification, Sort.by(direction.equalsIgnoreCase("ASC") ?
+                Sort.Direction.ASC : Sort.Direction.DESC, sortBy));
     }
 
     public Cliente findSingleClienteById(UUID clienteId) {
