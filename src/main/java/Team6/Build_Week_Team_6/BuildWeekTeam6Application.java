@@ -8,7 +8,6 @@ import java.io.IOException;
 
 @SpringBootApplication
 public class BuildWeekTeam6Application {
-
     public static void main(String[] args) throws FileNotFoundException, IOException {
         SpringApplication.run(BuildWeekTeam6Application.class, args);
 
