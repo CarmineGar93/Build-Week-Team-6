@@ -19,6 +19,9 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -29,9 +32,11 @@ public class FatturaService {
     private FatturaRepository fatturaRepository;
     @Autowired
     private StatoFatturaRepository statoFatturaRepository;
+    @Autowired
+    private List<DateTimeFormatter> formatters;
 
     public Page<Fattura> getFatture(int page, int size, String sortBy, String sortDir,
-                                    UUID clienteId, UUID statoId, LocalDate data,
+                                    UUID clienteId, UUID statoId, String data,
                                     Integer anno, Double importoMin, Double importoMax) {
 
         if (importoMin != null && importoMax != null && importoMin > importoMax) {
@@ -57,8 +62,9 @@ public class FatturaService {
         }
 
         if (data != null) {
+            LocalDate dataPars = validateDate(data);
             spec = spec.and((root, query, cb) ->
-                    cb.equal(root.get("data"), data));
+                    cb.equal(root.get("data"), dataPars));
         }
 
         if (anno != null) {
@@ -120,5 +126,17 @@ public class FatturaService {
         Fattura fattura = fatturaRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Fattura non trovata"));
         fatturaRepository.delete(fattura);
+    }
+
+    private LocalDate validateDate(String date) {
+        for (DateTimeFormatter formatter : formatters) {
+            try {
+                LocalDate dataFormattata = LocalDate.parse(date, formatter);
+                return dataFormattata;
+            } catch (DateTimeParseException ignored) {
+
+            }
+        }
+        throw new BadRequestException("Formato data non supportato");
     }
 }

@@ -55,8 +55,9 @@ public class ClienteService {
                     "dataUltimoContatto"), dataUltimoContatto)));
         }
         if (ragioneSociale != null) {
-            specification = specification.and(((root, query, criteriaBuilder) -> criteriaBuilder.like(root.get(
-                    "ragioneSociale"), ragioneSociale)));
+            specification =
+                    specification.and(((root, query, criteriaBuilder) -> criteriaBuilder.like(criteriaBuilder.lower(root.get("ragioneSociale")),
+                            "%" + ragioneSociale.toLowerCase() + "%")));
         }
         return clienteRepository.findAll(specification, Sort.by(direction.equalsIgnoreCase("ASC") ?
                 Sort.Direction.ASC : Sort.Direction.DESC, sortBy));

@@ -14,7 +14,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -28,11 +27,11 @@ public class FatturaController {
     public Page<Fattura> getFatture(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "data") String sortBy,
+            @RequestParam(defaultValue = "numero") String sortBy,
             @RequestParam(defaultValue = "ASC") String sortDir,
             @RequestParam(required = false) UUID clienteId,
             @RequestParam(required = false) UUID statoId,
-            @RequestParam(required = false) LocalDate data,
+            @RequestParam(required = false) String data,
             @RequestParam(required = false) Integer anno,
             @RequestParam(required = false) Double importoMin,
             @RequestParam(required = false) Double importoMax) {
